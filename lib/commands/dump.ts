@@ -1,0 +1,66 @@
+import {getLogger} from 'pomelo-logger';
+var logger = getLogger(__filename);
+import * as util from '../util';
+import {consts} from '../consts';
+import * as cliff from 'cliff';
+
+export default function(opts) {
+	return new Command(opts);
+};
+
+export var commandId = 'dump';
+export var helpCommand = 'help dump';
+
+
+export class Command 
+{
+	constructor(opts)
+	{
+		
+	}
+	handle(agent, comd, argv, rl, client, msg) {
+	if (!comd) {
+		agent.handle(helpCommand, msg, rl, client);
+		return;
+	}
+
+	var Context = agent.getContext();
+	if (Context === 'all') {
+		util.log('\n' + consts.COMANDS_CONTEXT_ERROR + '\n');
+		rl.prompt();
+		return;
+	}
+
+	var argvs = util.argsFilter(argv);
+
+	if (argvs.length < 3 || (comd === 'cpu' && argvs.length < 4)) {
+		agent.handle(helpCommand, msg, rl, client);
+		return;
+	}
+
+	var param = {};
+
+	if (comd === 'memory') {
+		param = {
+			filepath: argvs[2],
+			force: (argvs[3] === '--force' ? true: false)
+		}
+	} else if (comd === 'cpu') {
+		param = {
+			filepath: argvs[2],
+			times: argvs[3],
+			force: (argvs[4] === '--force' ? true: false)
+		}
+	}
+	
+	client.request('watchServer', {
+		comd: comd,
+		param: param,
+		context: Context
+	}, function(err, data) {
+		if (err) console.log(err);
+		else util.formatOutput(comd, data);
+		rl.prompt();
+	});
+}
+}
