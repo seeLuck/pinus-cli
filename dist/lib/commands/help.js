@@ -14,7 +14,7 @@ exports.commandId = 'help';
 class Command {
     constructor(opts) {
     }
-    handle(agent, comd, argv, rl, client, msg) {
+    handle(agent, comd, argv, msg, rl, client) {
         if (!comd) {
             util.errorHandle(argv, rl);
             return;

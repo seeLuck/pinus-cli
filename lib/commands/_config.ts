@@ -3,8 +3,11 @@ var logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
+import { ICommand, AgentCommand } from '../command';
+import { ReadLine } from 'readline';
+import { AdminClient } from 'pomelo-admin';
 
-export default function(opts)
+export default function (opts)
 {
 	return new Command(opts);
 };
@@ -12,14 +15,14 @@ export default function(opts)
 export var commandId = 'config';
 export var helpCommand = 'help config';
 
-export class Command
+export class Command implements ICommand
 {
 	constructor(opt)
 	{
 
 	}
 
-	handle(agent, comd, argv, rl, client, msg)
+	handle(agent : AgentCommand , comd : string , argv : string, msg : string, rl : ReadLine, client : AdminClient):void
 	{
 		if (!comd)
 		{
@@ -49,10 +52,10 @@ export class Command
 			param: comd,
 			context: Context
 		}, function (err, data)
-		{
-			if (err) console.log(err);
-			else util.log('\n' + cliff.inspect(data) + '\n');
-			rl.prompt();
-		});
+			{
+				if (err) console.log(err);
+				else util.log('\n' + cliff.inspect(data) + '\n');
+				rl.prompt();
+			});
 	}
 }

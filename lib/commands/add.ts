@@ -3,6 +3,9 @@ var logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
+import { ICommand, AgentCommand } from '../command';
+import { ReadLine } from 'readline';
+import { AdminClient } from 'pomelo-admin';
 
 export default function (opts)
 {
@@ -12,13 +15,13 @@ export default function (opts)
 export var commandId = 'add';
 export var helpCommand = 'help add';
 
-export class Command 
+export class Command implements ICommand
 {
 	constructor(opts)
 	{
 
 	}
-	handle(agent, comd, argv, rl, client, msg)
+	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -36,11 +39,11 @@ export class Command
 					signal: 'add',
 					args: argvs.slice(1)
 				}, function (err, data)
-				{
-					if (err) console.log(err);
-					else util.formatOutput(comd, data);
-					rl.prompt();
-				});
+					{
+						if (err) console.log(err);
+						else util.formatOutput(comd, data);
+						rl.prompt();
+					});
 			} else
 			{
 				rl.prompt();

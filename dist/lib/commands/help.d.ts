@@ -1,6 +1,10 @@
+/// <reference types="node" />
+import { ICommand, AgentCommand } from '../command';
+import { ReadLine } from 'readline';
+import { AdminClient } from 'pomelo-admin';
 export default function (opts: any): Command;
 export declare var commandId: string;
-export declare class Command {
+export declare class Command implements ICommand {
     constructor(opts: any);
-    handle(agent: any, comd: any, argv: any, rl: any, client: any, msg: any): void;
+    handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void;
 }

@@ -15,11 +15,12 @@
   "main": "./dist/index",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pomelo-cli": "./dist/bin/pomelo-cli"
+    "pomelo-cli": "./dist/bin/pomelo-cli.js"
   },
   "dependencies": {
     "@types/async": "^2.0.46",
     "@types/cliff": "^0.1.4",
+    "@types/node": "^8.5.2",
     "@types/optimist": "0.0.29",
     "async": "^2.6.0",
     "cliff": "^0.1.10",

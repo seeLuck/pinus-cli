@@ -4,7 +4,7 @@ const consts_1 = require("./consts");
 const util = require("./util");
 const fs = require("fs");
 const util_1 = require("util");
-class Command {
+class AgentCommand {
     constructor() {
         this.commands = {};
         this.Context = 'all';
@@ -15,8 +15,8 @@ class Command {
         fs.readdirSync(__dirname + '/commands').forEach(function (filename) {
             if (/\.js$/.test(filename)) {
                 var name = filename.substr(0, filename.lastIndexOf('.'));
-                var _command = require('./commands/' + name);
-                if (util_1.isFunction(_command.default)) {
+                var _command = require('./commands/' + name).default;
+                if (util_1.isFunction(_command)) {
                     self.commands[name] = _command;
                 }
             }
@@ -63,9 +63,9 @@ class Command {
         this.Context = context;
     }
 }
-exports.Command = Command;
+exports.AgentCommand = AgentCommand;
 function default_1() {
-    return new Command();
+    return new AgentCommand();
 }
 exports.default = default_1;
 //# sourceMappingURL=command.js.map

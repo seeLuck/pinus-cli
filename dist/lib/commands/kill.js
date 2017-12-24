@@ -13,7 +13,7 @@ exports.helpCommand = 'help kill';
 class Command {
     constructor(opts) {
     }
-    handle(agent, comd, argv, rl, client, msg) {
+    handle(agent, comd, argv, msg, rl, client) {
         rl.question(consts_1.consts.KILL_QUESTION_INFO, function (answer) {
             if (answer === 'yes') {
                 client.request(consts_1.consts.CONSOLE_MODULE, {

@@ -13,55 +13,55 @@ exports.commandId = 'enable';
 exports.helpCommand = 'help enable';
 class Command {
     constructor(opts) {
-        this.handle = function (agent, comd, argv, rl, client, msg) {
-            if (!comd) {
-                agent.handle(exports.helpCommand, msg, rl, client);
-                return;
-            }
-            var Context = agent.getContext();
-            if (Context === 'all') {
-                util.log('\n' + consts_1.consts.COMANDS_CONTEXT_ERROR + '\n');
-                rl.prompt();
-                return;
-            }
-            var argvs = util.argsFilter(argv);
-            if (argvs.length > 3) {
-                agent.handle(exports.helpCommand, msg, rl, client);
-                return;
-            }
-            var param = argvs[2];
-            if (comd === 'module') {
-                client.command(exports.commandId, param, null, function (err, data) {
-                    if (err)
-                        console.log(err);
-                    else {
-                        if (data === 1) {
-                            util.log('\ncommand ' + argv + ' ok\n');
-                        }
-                        else {
-                            util.log('\ncommand ' + argv + ' bad\n');
-                        }
+    }
+    handle(agent, comd, argv, msg, rl, client) {
+        if (!comd) {
+            agent.handle(exports.helpCommand, msg, rl, client);
+            return;
+        }
+        var Context = agent.getContext();
+        if (Context === 'all') {
+            util.log('\n' + consts_1.consts.COMANDS_CONTEXT_ERROR + '\n');
+            rl.prompt();
+            return;
+        }
+        var argvs = util.argsFilter(argv);
+        if (argvs.length > 3) {
+            agent.handle(exports.helpCommand, msg, rl, client);
+            return;
+        }
+        var param = argvs[2];
+        if (comd === 'module') {
+            client.command(exports.commandId, param, null, function (err, data) {
+                if (err)
+                    console.log(err);
+                else {
+                    if (data === 1) {
+                        util.log('\ncommand ' + argv + ' ok\n');
                     }
-                    rl.prompt();
-                });
-            }
-            else if (comd === 'app') {
-                client.request('watchServer', {
-                    comd: exports.commandId,
-                    param: param,
-                    context: Context
-                }, function (err, data) {
-                    if (err)
-                        console.log(err);
-                    else
-                        util.log('\n' + data + '\n');
-                    rl.prompt();
-                });
-            }
-            else {
-                agent.handle(exports.helpCommand, msg, rl, client);
-            }
-        };
+                    else {
+                        util.log('\ncommand ' + argv + ' bad\n');
+                    }
+                }
+                rl.prompt();
+            });
+        }
+        else if (comd === 'app') {
+            client.request('watchServer', {
+                comd: exports.commandId,
+                param: param,
+                context: Context
+            }, function (err, data) {
+                if (err)
+                    console.log(err);
+                else
+                    util.log('\n' + data + '\n');
+                rl.prompt();
+            });
+        }
+        else {
+            agent.handle(exports.helpCommand, msg, rl, client);
+        }
     }
 }
 exports.Command = Command;

@@ -3,9 +3,15 @@ import * as util from './util';
 import * as cliff from 'cliff';
 import * as fs from 'fs';
 import { isFunction } from 'util';
+import { AdminClient } from 'pomelo-admin';
+import { ReadLine } from 'readline';
 
+export interface ICommand
+{
+	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void;
+}
 
-export class Command
+export class AgentCommand
 {
 	commands = {};
 	Context = 'all';
@@ -22,8 +28,8 @@ export class Command
 			if (/\.js$/.test(filename))
 			{
 				var name = filename.substr(0, filename.lastIndexOf('.'));
-				var _command = require('./commands/' + name);
-				if(isFunction(_command.default))
+				var _command = require('./commands/' + name).default;
+				if (isFunction(_command))
 				{
 					self.commands[name] = _command;
 				}
@@ -31,7 +37,7 @@ export class Command
 		});
 	}
 
-	handle(argv, msg, rl, client)
+	handle(argv: string, msg: any, rl: ReadLine, client: AdminClient): void
 	{
 		var self = this;
 		var argvs = util.argsFilter(argv);
@@ -64,10 +70,10 @@ export class Command
 				client.request(consts.CONSOLE_MODULE, {
 					signal: "kill"
 				}, function (err, data)
-				{
-					if (err) console.log(err);
-					rl.prompt();
-				});
+					{
+						if (err) console.log(err);
+						rl.prompt();
+					});
 			} else
 			{
 				rl.prompt();
@@ -89,5 +95,5 @@ export class Command
 
 export default function ()
 {
-	return new Command();
+	return new AgentCommand();
 }

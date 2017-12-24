@@ -1,17 +1,20 @@
 import * as cliff from 'cliff';
 import * as async from 'async';
 import * as crypto from 'crypto';
-import {consts} from './consts';
+import { consts } from './consts';
 
 var serverMap = {};
 
-export function log(str) {
+export function log(str)
+{
 	process.stdout.write(str + '\n');
 }
 
-export function help() {
+export function help()
+{
 	var HELP_INFO_1 = consts.HELP_INFO_1;
-	for (var i = 0; i < HELP_INFO_1.length; i++) {
+	for (var i = 0; i < HELP_INFO_1.length; i++)
+	{
 		log(HELP_INFO_1[i]);
 	}
 
@@ -19,45 +22,57 @@ export function help() {
 	log(cliff.stringifyRows(COMANDS_ALL));
 
 	var HELP_INFO_2 = consts.HELP_INFO_2;
-	for (var i = 0; i < HELP_INFO_2.length; i++) {
+	for (var i = 0; i < HELP_INFO_2.length; i++)
+	{
 		log(HELP_INFO_2[i]);
 	}
 }
 
-export function errorHandle(comd, rl) {
+export function errorHandle(comd, rl)
+{
 	log('\nunknow command : ' + comd);
 	log('type help for help infomation\n');
 	rl.prompt();
 }
 
-export function argsFilter(argv) {
+export function argsFilter(argv)
+{
 	var lines;
-	if(argv.indexOf('\'') > 0) { 
+	if (argv.indexOf('\'') > 0)
+	{
 		lines = argv.split('\'');
 	}
-  var getArg = function(argv) {
+	var getArg = function (argv)
+	{
 		var argvs = argv.split(' ');
-		for (var i = 0; i < argvs.length; i++) {
-			if (argvs[i] === ' ' || argvs[i] === '') {
+		for (var i = 0; i < argvs.length; i++)
+		{
+			if (argvs[i] === ' ' || argvs[i] === '')
+			{
 				argvs.splice(i, 1);
 			}
 		}
 		return argvs;
-  };
-	if(!!lines) {
+	};
+	if (!!lines)
+	{
 		var head = getArg(lines[0]);
-		for(var i = 1; i < lines.length-1; i++) {
+		for (var i = 1; i < lines.length - 1; i++)
+		{
 			head = head.concat(lines[i]);
 		}
-		var bottom = getArg(lines[lines.length-1]);
+		var bottom = getArg(lines[lines.length - 1]);
 		return head.concat(bottom);
-	} else {
+	} else
+	{
 		return getArg(argv);
-  }
+	}
 }
 
-export function formatOutput(comd, data) {
-	if (comd === 'servers') {
+export function formatOutput(comd, data)
+{
+	if (comd === 'servers')
+	{
 		var msg = data.msg;
 		var rows = [];
 		var header = [];
@@ -66,31 +81,37 @@ export function formatOutput(comd, data) {
 		serverMap["all"] = 1;
 		header.push(['serverId', 'serverType', 'host', 'port', 'pid', 'heapUsed(M)', 'uptime(m)']);
 		var color = getColor(header[0].length);
-		for (var key in msg) {
+		for (var key in msg)
+		{
 			var server = msg[key];
-			if (!server['port']) {
+			if (!server['port'])
+			{
 				server['port'] = null;
 			}
 			serverMap[server['serverId']] = 1;
 			rows.push([server['serverId'], server['serverType'], server['host'], server['port'], server['pid'], server['heapUsed'], server['uptime']]);
 		}
-		async.sortBy(rows, function(server, callback) {
+		async.sortBy(rows, function (server, callback)
+		{
 			callback(null, server[0]);
-		}, function(err, _results) {
+		}, function (err, _results)
+		{
 			results = header.concat(_results);
 			log('\n' + cliff.stringifyRows(results, color) + '\n');
 			return;
 		});
 	}
 
-	if (comd === 'connections') {
+	if (comd === 'connections')
+	{
 		var msg = data.msg;
 		var rows = [];
 		var color = getColor(3);
 		rows.push(['serverId', 'totalConnCount', 'loginedCount']);
 		var sumConnCount = 0,
-		    sumloginedCount = 0;
-		for (var key in msg) {
+			sumloginedCount = 0;
+		for (var key in msg)
+		{
 			var server = msg[key];
 			rows.push([server['serverId'], server['totalConnCount'], server['loginedCount']]);
 			sumConnCount += server['totalConnCount'];
@@ -101,20 +122,24 @@ export function formatOutput(comd, data) {
 		return;
 	}
 
-	if (comd === 'logins') {
+	if (comd === 'logins')
+	{
 		var msg = data.msg;
 		var rows = [];
 		var color = getColor(3);
 		rows.push(['loginTime', 'uid', 'address']);
-		for (var key in msg) {
+		for (var key in msg)
+		{
 			var server = msg[key];
 			var loginedList = server['loginedList'] || [];
-			if (loginedList && loginedList.length === 0) {
+			if (loginedList && loginedList.length === 0)
+			{
 				log('\nno user logined in this connector\n');
 				return;
 			}
 			log('\nserverId: ' + server['serverId'] + ' totalConnCount: ' + server['totalConnCount'] + ' loginedCount: ' + server['loginedCount']);
-			for (var i = 0; i < loginedList.length; i++) {
+			for (var i = 0; i < loginedList.length; i++)
+			{
 				rows.push([format_date(new Date(loginedList[i]['loginTime'])), loginedList[i]['uid'], loginedList[i]['address']]);
 			}
 			log('\n' + cliff.stringifyRows(rows, color) + '\n');
@@ -122,53 +147,63 @@ export function formatOutput(comd, data) {
 		}
 	}
 
-	if (comd === 'modules') {
+	if (comd === 'modules')
+	{
 		var msg = data.msg;
 		log('\n' + consts.MODULE_INFO);
 		log(data.msg + '\n');
 		return;
 	}
 
-	if (comd === 'status') {
+	if (comd === 'status')
+	{
 		var msg = data.msg;
 		var server = msg.body;
 		var rows = [];
 		rows.push(['time', 'serverId', 'serverType', 'pid', 'cpuAvg', 'memAvg', 'vsz', 'rss', 'usr', 'sys', 'gue']);
 		var color = getColor(rows[0].length);
-		if (server) {
+		if (server)
+		{
 			rows.push([server['time'], server['serverId'], server['serverType'], server['pid'], server['cpuAvg'], server['memAvg'], server['vsz'], server['rss'], server['usr'], server['sys'], server['gue']]);
 			log('\n' + cliff.stringifyRows(rows, color) + '\n');
-		} else {
+		} else
+		{
 			log('\n' + consts.STATUS_ERROR + '\n');
 		}
 		return;
 	}
 
-	if (comd === 'config' || comd === 'components' || comd === 'settings' || comd === 'get' || comd === 'set' || comd === 'exec' || comd === 'run') {
+	if (comd === 'config' || comd === 'components' || comd === 'settings' || comd === 'get' || comd === 'set' || comd === 'exec' || comd === 'run')
+	{
 		log('\n' + cliff.inspect(data) + '\n');
 		return;
 	}
 
-	if (comd === 'stop') {
+	if (comd === 'stop')
+	{
 		return
 	}
 
-	if (comd === 'add') {
+	if (comd === 'add')
+	{
 		return
 	}
 
-	if (comd === 'proxy' || comd === 'handler') {
+	if (comd === 'proxy' || comd === 'handler')
+	{
 		log('\n' + cliff.inspect(data) + '\n');
 		return
 	}
 
-	if (comd === 'memory' || comd === 'cpu') {
+	if (comd === 'memory' || comd === 'cpu')
+	{
 		log(data + '\n');
 		return;
 	}
 }
 
-export function format_date(date, friendly ?: boolean) {
+export function format_date(date, friendly?: boolean)
+{
 	var year = date.getFullYear();
 	var month = date.getMonth() + 1;
 	var day = date.getDate();
@@ -176,18 +211,23 @@ export function format_date(date, friendly ?: boolean) {
 	var minute = date.getMinutes();
 	var second = date.getSeconds();
 
-	if (friendly) {
+	if (friendly)
+	{
 		var now = new Date();
 		var mseconds = -(date.getTime() - now.getTime());
 		var time_std = [1000, 60 * 1000, 60 * 60 * 1000, 24 * 60 * 60 * 1000];
-		if (mseconds < time_std[3]) {
-			if (mseconds > 0 && mseconds < time_std[1]) {
+		if (mseconds < time_std[3])
+		{
+			if (mseconds > 0 && mseconds < time_std[1])
+			{
 				return Math.floor(mseconds / time_std[0]).toString() + ' 秒前';
 			}
-			if (mseconds > time_std[1] && mseconds < time_std[2]) {
+			if (mseconds > time_std[1] && mseconds < time_std[2])
+			{
 				return Math.floor(mseconds / time_std[1]).toString() + ' 分钟前';
 			}
-			if (mseconds > time_std[2]) {
+			if (mseconds > time_std[2])
+			{
 				return Math.floor(mseconds / time_std[2]).toString() + ' 小时前';
 			}
 		}
@@ -202,55 +242,66 @@ export function format_date(date, friendly ?: boolean) {
 	return year + '-' + month + '-' + day + ' ' + hour + ':' + minute;
 };
 
-export function getColor(len) {
+export function getColor(len)
+{
 	var color = [];
-	for (var i = 0; i < len; i++) {
+	for (var i = 0; i < len; i++)
+	{
 		color.push('blue');
 	}
 	return color;
 }
 
-export function md5(str) {
+export function md5(str)
+{
 	var md5sum = crypto.createHash('md5');
 	md5sum.update(str);
 	str = md5sum.digest('hex');
 	return str;
 }
 
-export function tabComplete(hits, line, map, comd) {
-	if(hits.length) {
+export function tabComplete(hits, line, map, comd)
+{
+	if (hits.length)
+	{
 		return hits;
 	}
 
-	if (comd === "enable" || comd === "disable") {
+	if (comd === "enable" || comd === "disable")
+	{
 		map = {
 			"app": 1,
 			"module": 1
 		};
-	} 
+	}
 
-	if (comd === "dump") {
+	if (comd === "dump")
+	{
 		map = {
 			"memory": 1,
 			"cpu": 1
 		};
 	}
 
-	if (comd === "use" || comd === "stop") {
+	if (comd === "use" || comd === "stop")
+	{
 		map = serverMap;
 	}
 
 	// var _hits = [];
-	for (var k in map) {
-	  var t = k;
-	  if(comd !== "complete") {
-	    t = comd + " " + k;
-	  }
-      if (t.indexOf(line) === 0) {
-        hits.push(t);
-      }
-    }
+	for (var k in map)
+	{
+		var t = k;
+		if (comd !== "complete")
+		{
+			t = comd + " " + k;
+		}
+		if (t.indexOf(line) === 0)
+		{
+			hits.push(t);
+		}
+	}
 
-    hits.sort();
-    return hits;
+	hits.sort();
+	return hits;
 }
