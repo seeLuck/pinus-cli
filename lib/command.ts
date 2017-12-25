@@ -3,7 +3,7 @@ import * as util from './util';
 import * as cliff from 'cliff';
 import * as fs from 'fs';
 import { isFunction } from 'util';
-import { AdminClient } from 'pomelo-admin';
+import { AdminClient } from 'pinus-admin';
 import { ReadLine } from 'readline';
 
 export interface ICommand

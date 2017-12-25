@@ -1,13 +1,13 @@
 {
-  "name": "pomelo-cli",
+  "name": "pinus-cli",
   "version": "1.0.0",
-  "description": "Pomelo command line client for managing pomelo",
+  "description": "pinus command line client for managing pinus",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node_modules/.bin/tsc"
   },
   "repository": "",
   "keywords": [
-    "pomelo",
+    "pinus",
     "command",
     "line",
     "maintening"
@@ -15,7 +15,7 @@
   "main": "./dist/index",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pomelo-cli": "./dist/bin/pomelo-cli.js"
+    "pinus-cli": "./dist/bin/pinus-cli.js"
   },
   "dependencies": {
     "@types/async": "^2.0.46",
@@ -25,9 +25,11 @@
     "async": "^2.6.0",
     "cliff": "^0.1.10",
     "optimist": "^0.6.1",
-    "pomelo-admin": "1.1.1",
-    "pomelo-logger": "1.0.3"
+    "pinus-admin": "1.0.0",
+    "pinus-logger": "1.0.0"
   },
-  "author": "fantasyni",
+  "devDependencies": {
+    "typescript": "^2.6.2"
+  },
   "license": "MIT"
 }

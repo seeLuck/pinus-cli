@@ -1,5 +1,5 @@
 import * as readline from 'readline';
-import { AdminClient } from 'pomelo-admin';
+import { AdminClient } from 'pinus-admin';
 import * as command from './command';
 import { consts } from './consts';
 import * as util from './util';

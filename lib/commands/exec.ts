@@ -1,4 +1,4 @@
-import { getLogger } from 'pomelo-logger';
+import { getLogger } from 'pinus-logger';
 var logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
@@ -6,7 +6,7 @@ import * as cliff from 'cliff';
 import * as fs from 'fs';
 import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
-import { AdminClient } from 'pomelo-admin';
+import { AdminClient } from 'pinus-admin';
 
 export default function (opts)
 {

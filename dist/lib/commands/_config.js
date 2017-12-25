@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pomelo_logger_1 = require("pomelo-logger");
-var logger = pomelo_logger_1.getLogger(__filename);
+const pinus_logger_1 = require("pinus-logger");
+var logger = pinus_logger_1.getLogger(__filename);
 const util = require("../util");
 const consts_1 = require("../consts");
 const cliff = require("cliff");

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const readline = require("readline");
-const pomelo_admin_1 = require("pomelo-admin");
+const pinus_admin_1 = require("pinus-admin");
 const command = require("./command");
 const consts_1 = require("./consts");
 const util = require("./util");
@@ -13,7 +13,7 @@ var port = optimist_1.argv['P'] = optimist_1.argv['P'] || 3005;
 var context = 'all';
 var client = null;
 function doConnect() {
-    client = new pomelo_admin_1.AdminClient({
+    client = new pinus_admin_1.AdminClient({
         username: username,
         password: password,
         md5: true

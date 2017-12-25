@@ -20,15 +20,15 @@ exports.consts = {
         "\nWelcome to Pomelo interactive client.",
         "Pomelo is a fast, scalable game server framework for node.js. ",
         "You can use following command to connect to pomelo master",
-        "pomelo-cli -h host -P port -u user -p password",
-        "Default type pomelo-cli equals to:",
-        "pomelo-cli -h 127.0.0.1 -P 3005 -u admin -p admin\n"
+        "pinus-cli -h host -P port -u user -p password",
+        "Default type pinus-cli equals to:",
+        "pinus-cli -h 127.0.0.1 -P 3005 -u admin -p admin\n"
     ],
     COMANDS_ALL: [
         ["command", "  description"],
         ["?", "  symbol for help"],
         ["help", "  display the help"],
-        ["quit", "  quit pomelo-cli"],
+        ["quit", "  quit pinus-cli"],
         ["kill", "  kill all servers"],
         ["exec", "  exec script files"],
         ["get", "  equal to app.get(key) "],
@@ -117,7 +117,7 @@ exports.consts = {
         ],
         "exec": ["\nexec script files",
             "example: exec <filepath>",
-            "filepath can be relative path to your pomelo-cli pwd path",
+            "filepath can be relative path to your pinus-cli pwd path",
             "example : exec xxx.js",
             "equals to : exec pwd/xxx.js",
             "filepath also can be absolute with \'/\' ahead",

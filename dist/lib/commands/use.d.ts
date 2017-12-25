@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
-import { AdminClient } from 'pomelo-admin';
+import { AdminClient } from 'pinus-admin';
 export default function (opts: any): Command;
 export declare var commandId: string;
 export declare var helpCommand: string;

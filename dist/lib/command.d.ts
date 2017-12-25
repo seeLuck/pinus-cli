@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { AdminClient } from 'pomelo-admin';
+import { AdminClient } from 'pinus-admin';
 import { ReadLine } from 'readline';
 export interface ICommand {
     handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void;
