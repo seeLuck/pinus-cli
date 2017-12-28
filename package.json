@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "description": "pinus command line client for managing pinus",
   "scripts": {
-    "build": "node_modules/.bin/tsc"
+    "build": "node_modules/.bin/tsc",
+    "test": "node_modules/.bin/tsc"
   },
   "repository": "",
   "keywords": [
