@@ -7,7 +7,7 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
@@ -18,11 +18,11 @@ export var helpCommand = 'help dump';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -67,7 +67,7 @@ export class Command implements ICommand
 			comd: comd,
 			param: param,
 			context: Context
-		}, function (err, data)
+		}, function (err: Error, data:{ msg: { [key: string]: any } })
 			{
 				if (err) console.log(err);
 				else util.formatOutput(comd, data);

@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,21 +7,21 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'removeCron';
-export var helpCommand = 'help removeCron';
+export let commandId = 'removeCron';
+export let helpCommand = 'help removeCron';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -29,7 +29,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var argvs = util.argsFilter(argv);
+		let argvs = util.argsFilter(argv);
 
 		rl.question(consts.ADDCRON_QUESTION_INFO, function (answer)
 		{
@@ -38,7 +38,7 @@ export class Command implements ICommand
 				client.request(consts.CONSOLE_MODULE, {
 					signal: 'removeCron',
 					args: argvs.slice(1)
-				}, function (err, data)
+				}, function (err:Error, data:{ msg: { [key: string]: any }})
 				{
 					if (err) console.log(err);
 					else util.formatOutput(comd, data);

@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,22 +7,22 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'enable';
-export var helpCommand = 'help enable';
+export let commandId = 'enable';
+export let helpCommand = 'help enable';
 
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -30,7 +30,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var Context = agent.getContext();
+		let Context = agent.getContext();
 		if (Context === 'all')
 		{
 			util.log('\n' + consts.COMANDS_CONTEXT_ERROR + '\n');
@@ -38,7 +38,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var argvs = util.argsFilter(argv);
+		let argvs = util.argsFilter(argv);
 
 		if (argvs.length > 3)
 		{
@@ -46,11 +46,11 @@ export class Command implements ICommand
 			return;
 		}
 
-		var param = argvs[2];
+		let param = argvs[2];
 
 		if (comd === 'module')
 		{
-			client.command(commandId, param, null, function (err, data)
+			client.command(commandId, param, null, function (err: Error, data: number)
 			{
 				if (err) console.log(err);
 				else
@@ -71,7 +71,7 @@ export class Command implements ICommand
 				comd: commandId,
 				param: param,
 				context: Context
-			}, function (err, data)
+			}, function (err: Error, data: string)
 				{
 					if (err) console.log(err);
 					else util.log('\n' + data + '\n');

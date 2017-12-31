@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,21 +7,21 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'use';
-export var helpCommand = 'help use';
+export let commandId = 'use';
+export let helpCommand = 'help use';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -29,8 +29,8 @@ export class Command implements ICommand
 			return;
 		}
 
-		var Context = agent.getContext();
-		var argvs = util.argsFilter(argv);
+		let Context = agent.getContext();
+		let argvs = util.argsFilter(argv);
 
 		if (argvs.length > 2)
 		{
@@ -38,14 +38,14 @@ export class Command implements ICommand
 			return;
 		}
 
-		var user = msg['user'] || 'admin';
+		let user = msg['user'] || 'admin';
 
 		if (comd === 'all')
 		{
 			util.log('\nswitch to server: ' + comd + '\n');
 			Context = comd;
 			agent.setContext(Context);
-			var PROMPT = user + consts.PROMPT + Context + '>';
+			let PROMPT = user + consts.PROMPT + Context + '>';
 			rl.setPrompt(PROMPT);
 			rl.prompt();
 			return;
@@ -54,18 +54,18 @@ export class Command implements ICommand
 		client.request('watchServer', {
 			comd: 'servers',
 			context: Context
-		}, function (err, data)
+		}, function (err:Error, data:{ msg: { [key: string]: any }})
 		{
 			if (err) console.log(err);
 			else
 			{
-				var _msg = data['msg'];
+				let _msg = data['msg'];
 				if (_msg[comd])
 				{
 					util.log('\nswitch to server: ' + comd + '\n');
 					Context = comd;
 					agent.setContext(Context);
-					var PROMPT = user + consts.PROMPT + Context + '>';
+					let PROMPT = user + consts.PROMPT + Context + '>';
 					rl.setPrompt(PROMPT);
 				} else
 				{

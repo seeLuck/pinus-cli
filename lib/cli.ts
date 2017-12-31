@@ -5,12 +5,12 @@ import { consts } from './consts';
 import * as util from './util';
 import { argv } from 'optimist';
 
-var username = argv['u'] = argv['u'] || 'monitor';
-var password = argv['p'] = argv['p'] || 'monitor';
-var host = argv['h'] = argv['h'] || 'localhost';
-var port = argv['P'] = argv['P'] || 3005;
-var context = 'all';
-var client = null;
+let username = argv['u'] = argv['u'] || 'monitor';
+let password = argv['p'] = argv['p'] || 'monitor';
+let host = argv['h'] = argv['h'] || 'localhost';
+let port = argv['P'] = argv['P'] || 3005;
+let context = 'all';
+let client:AdminClient = null;
 
 
 export default function doConnect()
@@ -20,8 +20,8 @@ export default function doConnect()
     password: password,
     md5: true
   });
-  var id = 'pomelo_cli_' + Date.now();
-  client.connect(id, host, port, function (err)
+  let id = 'pomelo_cli_' + Date.now();
+  client.connect(id, host, port, function (err: Error)
   {
     if (err)
     {
@@ -29,14 +29,14 @@ export default function doConnect()
       process.exit(0);
     } else
     {
-      var ASCII_LOGO = consts.ASCII_LOGO;
-      for (var i = 0; i < ASCII_LOGO.length; i++)
+      let ASCII_LOGO = consts.ASCII_LOGO;
+      for (let i = 0; i < ASCII_LOGO.length; i++)
       {
         util.log(ASCII_LOGO[i]);
       }
 
-      var WELCOME_INFO = consts.WELCOME_INFO;
-      for (var i = 0, l = WELCOME_INFO.length; i < l; i++)
+      let WELCOME_INFO = consts.WELCOME_INFO;
+      for (let i = 0, l = WELCOME_INFO.length; i < l; i++)
       {
         util.log(WELCOME_INFO[i]);
       }
@@ -53,16 +53,16 @@ export default function doConnect()
 
 function startCli()
 {
-  var rl = readline.createInterface(process.stdin, process.stdout, completer);
-  var PROMPT = username + consts.PROMPT + context + '>';
+  let rl = readline.createInterface(process.stdin, process.stdout, completer);
+  let PROMPT = username + consts.PROMPT + context + '>';
   rl.setPrompt(PROMPT);
   rl.prompt();
 
-  var rootCommand = command.default();
+  let rootCommand = command.default();
 
   rl.on('line', function (line)
   {
-    var key = line.trim();
+    let key = line.trim();
     if (!key)
     {
       util.help();
@@ -98,23 +98,23 @@ function startCli()
   });
 }
 
-function completer(line)
+function completer(line: string)
 {
   line = line.trim();
-  var completions = consts.COMANDS_COMPLETE;
-  var hits = [];
+  let completions = consts.COMANDS_COMPLETE;
+  let hits = [];
   // commands tab for infos 
-  if (consts.COMPLETE_TWO[line])
+  if (consts.COMPLETE_TWO[line as keyof typeof consts.COMPLETE_TWO])
   {
     if (line === "show")
     {
-      for (var k in consts.SHOW_COMMAND)
+      for (let k in consts.SHOW_COMMAND)
       {
         hits.push(k);
       }
     } else if (line === "help")
     {
-      for (var k in consts.COMANDS_COMPLETE_INFO)
+      for (let k in consts.COMANDS_COMPLETE_INFO)
       {
         hits.push(k);
       }

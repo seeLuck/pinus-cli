@@ -8,12 +8,12 @@ import { ReadLine } from 'readline';
 
 export interface ICommand
 {
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void;
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void;
 }
 
 export class AgentCommand
 {
-	commands = {};
+	commands: {[key:string]:any} = {};
 	Context = 'all';
 
 	constructor()
@@ -22,13 +22,13 @@ export class AgentCommand
 	}
 	init()
 	{
-		var self = this;
+		let self:AgentCommand = this;
 		fs.readdirSync(__dirname + '/commands').forEach(function (filename)
 		{
 			if (/\.js$/.test(filename))
 			{
-				var name = filename.substr(0, filename.lastIndexOf('.'));
-				var _command = require('./commands/' + name).default;
+				let name = filename.substr(0, filename.lastIndexOf('.'));
+				let _command = require('./commands/' + name).default;
 				if (isFunction(_command))
 				{
 					self.commands[name] = _command;
@@ -39,16 +39,16 @@ export class AgentCommand
 
 	handle(argv: string, msg: any, rl: ReadLine, client: AdminClient): void
 	{
-		var self = this;
-		var argvs = util.argsFilter(argv);
-		var comd = argvs[0];
-		var comd1 = argvs[1] || "";
+		let self = this;
+		let argvs = util.argsFilter(argv);
+		let comd = argvs[0];
+		let comd1 = argvs[1] || "";
 
 		comd1 = comd1.trim();
-		var m = this.commands[comd];
+		let m = this.commands[comd];
 		if (m)
 		{
-			var _command = m();
+			let _command = m();
 			_command.handle(self, comd1, argv, rl, client, msg);
 		} else
 		{
@@ -56,12 +56,12 @@ export class AgentCommand
 		}
 	}
 
-	quit(rl)
+	quit(rl: ReadLine)
 	{
 		rl.emit('close');
 	}
 
-	kill(rl, client)
+	kill(rl:ReadLine, client:AdminClient)
 	{
 		rl.question(consts.KILL_QUESTION_INFO, function (answer)
 		{
@@ -69,7 +69,7 @@ export class AgentCommand
 			{
 				client.request(consts.CONSOLE_MODULE, {
 					signal: "kill"
-				}, function (err, data)
+				}, function (err: Error, data: any)
 					{
 						if (err) console.log(err);
 						rl.prompt();
@@ -86,7 +86,7 @@ export class AgentCommand
 		return this.Context;
 	}
 
-	setContext(context)
+	setContext(context: string)
 	{
 		this.Context = context;
 	}

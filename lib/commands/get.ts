@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,21 +7,21 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'get';
-export var helpCommand = 'help get';
+export let commandId = 'get';
+export let helpCommand = 'help get';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -29,7 +29,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var Context = agent.getContext();
+		let Context = agent.getContext();
 		if (Context === 'all')
 		{
 			util.log('\n' + consts.COMANDS_CONTEXT_ERROR + '\n');
@@ -37,7 +37,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var argvs = util.argsFilter(argv);
+		let argvs = util.argsFilter(argv);
 
 		if (argvs.length < 2)
 		{
@@ -49,7 +49,7 @@ export class Command implements ICommand
 			comd: commandId,
 			param: comd,
 			context: Context
-		}, function (err, data)
+		}, function (err: Error, data:{ msg: { [key: string]: any }})
 		{
 			if (err) console.log(err);
 			else util.formatOutput(commandId, data);

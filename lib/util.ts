@@ -2,50 +2,51 @@ import * as cliff from 'cliff';
 import * as async from 'async';
 import * as crypto from 'crypto';
 import { consts } from './consts';
+import { ReadLine } from 'readline';
 
-var serverMap = {};
+let serverMap: { [key: string]: any } = {};
 
-export function log(str)
+export function log(str: string)
 {
 	process.stdout.write(str + '\n');
 }
 
 export function help()
 {
-	var HELP_INFO_1 = consts.HELP_INFO_1;
-	for (var i = 0; i < HELP_INFO_1.length; i++)
+	let HELP_INFO_1 = consts.HELP_INFO_1;
+	for (let i = 0; i < HELP_INFO_1.length; i++)
 	{
 		log(HELP_INFO_1[i]);
 	}
 
-	var COMANDS_ALL = consts.COMANDS_ALL;
+	let COMANDS_ALL = consts.COMANDS_ALL;
 	log(cliff.stringifyRows(COMANDS_ALL));
 
-	var HELP_INFO_2 = consts.HELP_INFO_2;
-	for (var i = 0; i < HELP_INFO_2.length; i++)
+	let HELP_INFO_2 = consts.HELP_INFO_2;
+	for (let i = 0; i < HELP_INFO_2.length; i++)
 	{
 		log(HELP_INFO_2[i]);
 	}
 }
 
-export function errorHandle(comd, rl)
+export function errorHandle(comd: string, rl: ReadLine)
 {
 	log('\nunknow command : ' + comd);
 	log('type help for help infomation\n');
 	rl.prompt();
 }
 
-export function argsFilter(argv)
+export function argsFilter(argv: string)
 {
-	var lines;
+	let lines;
 	if (argv.indexOf('\'') > 0)
 	{
 		lines = argv.split('\'');
 	}
-	var getArg = function (argv)
+	let getArg = function (argv: string)
 	{
-		var argvs = argv.split(' ');
-		for (var i = 0; i < argvs.length; i++)
+		let argvs = argv.split(' ');
+		for (let i = 0; i < argvs.length; i++)
 		{
 			if (argvs[i] === ' ' || argvs[i] === '')
 			{
@@ -56,12 +57,12 @@ export function argsFilter(argv)
 	};
 	if (!!lines)
 	{
-		var head = getArg(lines[0]);
-		for (var i = 1; i < lines.length - 1; i++)
+		let head = getArg(lines[0]);
+		for (let i = 1; i < lines.length - 1; i++)
 		{
 			head = head.concat(lines[i]);
 		}
-		var bottom = getArg(lines[lines.length - 1]);
+		let bottom = getArg(lines[lines.length - 1]);
 		return head.concat(bottom);
 	} else
 	{
@@ -69,21 +70,21 @@ export function argsFilter(argv)
 	}
 }
 
-export function formatOutput(comd, data)
+export function formatOutput(comd: string, data: { msg: { [key: string]: any } })
 {
 	if (comd === 'servers')
 	{
-		var msg = data.msg;
-		var rows = [];
-		var header = [];
-		var results = [];
+		let msg = data.msg;
+		let rows = [];
+		let header: Array<any> = [];
+		let results = [];
 		serverMap = {};
 		serverMap["all"] = 1;
 		header.push(['serverId', 'serverType', 'host', 'port', 'pid', 'heapUsed(M)', 'uptime(m)']);
-		var color = getColor(header[0].length);
-		for (var key in msg)
+		let color = getColor(header[0].length);
+		for (let key in msg)
 		{
-			var server = msg[key];
+			let server = msg[key];
 			if (!server['port'])
 			{
 				server['port'] = null;
@@ -95,24 +96,24 @@ export function formatOutput(comd, data)
 		{
 			callback(null, server[0]);
 		}, function (err, _results)
-		{
-			results = header.concat(_results);
-			log('\n' + cliff.stringifyRows(results, color) + '\n');
-			return;
-		});
+			{
+				results = header.concat(_results);
+				log('\n' + cliff.stringifyRows(results, color) + '\n');
+				return;
+			});
 	}
 
 	if (comd === 'connections')
 	{
-		var msg = data.msg;
-		var rows = [];
-		var color = getColor(3);
+		let msg = data.msg;
+		let rows = [];
+		let color = getColor(3);
 		rows.push(['serverId', 'totalConnCount', 'loginedCount']);
-		var sumConnCount = 0,
+		let sumConnCount = 0,
 			sumloginedCount = 0;
-		for (var key in msg)
+		for (let key in msg)
 		{
-			var server = msg[key];
+			let server = msg[key];
 			rows.push([server['serverId'], server['totalConnCount'], server['loginedCount']]);
 			sumConnCount += server['totalConnCount'];
 			sumloginedCount += server['loginedCount'];
@@ -124,21 +125,21 @@ export function formatOutput(comd, data)
 
 	if (comd === 'logins')
 	{
-		var msg = data.msg;
-		var rows = [];
-		var color = getColor(3);
+		let msg = data.msg;
+		let rows = [];
+		let color = getColor(3);
 		rows.push(['loginTime', 'uid', 'address']);
-		for (var key in msg)
+		for (let key in msg)
 		{
-			var server = msg[key];
-			var loginedList = server['loginedList'] || [];
+			let server = msg[key];
+			let loginedList = server['loginedList'] || [];
 			if (loginedList && loginedList.length === 0)
 			{
 				log('\nno user logined in this connector\n');
 				return;
 			}
 			log('\nserverId: ' + server['serverId'] + ' totalConnCount: ' + server['totalConnCount'] + ' loginedCount: ' + server['loginedCount']);
-			for (var i = 0; i < loginedList.length; i++)
+			for (let i = 0; i < loginedList.length; i++)
 			{
 				rows.push([format_date(new Date(loginedList[i]['loginTime'])), loginedList[i]['uid'], loginedList[i]['address']]);
 			}
@@ -149,7 +150,7 @@ export function formatOutput(comd, data)
 
 	if (comd === 'modules')
 	{
-		var msg = data.msg;
+		let msg = data.msg;
 		log('\n' + consts.MODULE_INFO);
 		log(data.msg + '\n');
 		return;
@@ -157,11 +158,11 @@ export function formatOutput(comd, data)
 
 	if (comd === 'status')
 	{
-		var msg = data.msg;
-		var server = msg.body;
-		var rows = [];
+		let msg = data.msg;
+		let server = msg.body;
+		let rows = [];
 		rows.push(['time', 'serverId', 'serverType', 'pid', 'cpuAvg', 'memAvg', 'vsz', 'rss', 'usr', 'sys', 'gue']);
-		var color = getColor(rows[0].length);
+		let color = getColor(rows[0].length);
 		if (server)
 		{
 			rows.push([server['time'], server['serverId'], server['serverType'], server['pid'], server['cpuAvg'], server['memAvg'], server['vsz'], server['rss'], server['usr'], server['sys'], server['gue']]);
@@ -202,20 +203,20 @@ export function formatOutput(comd, data)
 	}
 }
 
-export function format_date(date, friendly?: boolean)
+export function format_date(date: Date, friendly?: boolean)
 {
-	var year = date.getFullYear();
-	var month = date.getMonth() + 1;
-	var day = date.getDate();
-	var hour = date.getHours();
-	var minute = date.getMinutes();
-	var second = date.getSeconds();
+	let year = date.getFullYear();
+	let month = date.getMonth() + 1;
+	let day = date.getDate();
+	let hour = date.getHours();
+	let minute = date.getMinutes();
+	let second = date.getSeconds();
 
 	if (friendly)
 	{
-		var now = new Date();
-		var mseconds = -(date.getTime() - now.getTime());
-		var time_std = [1000, 60 * 1000, 60 * 60 * 1000, 24 * 60 * 60 * 1000];
+		let now = new Date();
+		let mseconds = -(date.getTime() - now.getTime());
+		let time_std = [1000, 60 * 1000, 60 * 60 * 1000, 24 * 60 * 60 * 1000];
 		if (mseconds < time_std[3])
 		{
 			if (mseconds > 0 && mseconds < time_std[1])
@@ -235,32 +236,33 @@ export function format_date(date, friendly?: boolean)
 
 	//month = ((month < 10) ? '0' : '') + month;
 	//day = ((day < 10) ? '0' : '') + day;
-	hour = ((hour < 10) ? '0' : '') + hour;
-	minute = ((minute < 10) ? '0' : '') + minute;
-	second = ((second < 10) ? '0' : '') + second;
 
-	return year + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+	let hourStr: string = ((hour < 10) ? '0' : '') + hour;
+	let minuteStr: string = ((minute < 10) ? '0' : '') + minute;
+	let secondStr: string = ((second < 10) ? '0' : '') + second;
+
+	return year + '-' + month + '-' + day + ' ' + hourStr + ':' + minuteStr;
 };
 
-export function getColor(len)
+export function getColor(len: number)
 {
-	var color = [];
-	for (var i = 0; i < len; i++)
+	let color = [];
+	for (let i = 0; i < len; i++)
 	{
 		color.push('blue');
 	}
 	return color;
 }
 
-export function md5(str)
+export function md5(str: string)
 {
-	var md5sum = crypto.createHash('md5');
+	let md5sum = crypto.createHash('md5');
 	md5sum.update(str);
 	str = md5sum.digest('hex');
 	return str;
 }
 
-export function tabComplete(hits, line, map, comd)
+export function tabComplete(hits: Array<any>, line: string, map: object, comd: string)
 {
 	if (hits.length)
 	{
@@ -288,10 +290,10 @@ export function tabComplete(hits, line, map, comd)
 		map = serverMap;
 	}
 
-	// var _hits = [];
-	for (var k in map)
+	// let _hits = [];
+	for (let k in map)
 	{
-		var t = k;
+		let t = k;
 		if (comd !== "complete")
 		{
 			t = comd + " " + k;

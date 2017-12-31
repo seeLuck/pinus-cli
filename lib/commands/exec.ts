@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -8,21 +8,21 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'exec';
-export var helpCommand = 'help exec';
+export let commandId = 'exec';
+export let helpCommand = 'help exec';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -30,7 +30,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var Context = agent.getContext();
+		let Context = agent.getContext();
 		if (Context === 'all')
 		{
 			util.log('\n' + consts.COMANDS_CONTEXT_ERROR + '\n');
@@ -38,7 +38,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var argvs = util.argsFilter(argv);
+		let argvs = util.argsFilter(argv);
 
 		if (argvs.length > 2)
 		{
@@ -46,7 +46,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var file = null;
+		let file = null;
 		if (comd[0] !== '/')
 		{
 			comd = process.cwd() + '/' + comd;
@@ -66,14 +66,14 @@ export class Command implements ICommand
 			command: 'run',
 			serverId: Context,
 			script: file
-		}, function (err, msg)
+		}, function (err: Error, msg: any)
 			{
 				if (err) console.log(err);
 				else
 				{
 					try
 					{
-						msg = JSON.parse(msg);
+						msg = <{ msg: { [key: string]: any }}>JSON.parse(msg);
 						util.formatOutput(commandId, msg);
 					} catch (e)
 					{

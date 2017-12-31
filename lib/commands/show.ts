@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,21 +7,21 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'show';
-export var helpCommand = 'help show';
+export let commandId = 'show';
+export let helpCommand = 'help show';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -29,9 +29,9 @@ export class Command implements ICommand
 			return;
 		}
 
-		var Context = agent.getContext();
-		var argvs = util.argsFilter(argv);
-		var param = "";
+		let Context = agent.getContext();
+		let argvs = util.argsFilter(argv);
+		let param = "";
 
 		if (argvs.length > 2 && comd !== 'config')
 		{
@@ -50,16 +50,16 @@ export class Command implements ICommand
 			param = argvs[2];
 		}
 
-		var user = msg['user'] || 'admin';
+		let user = msg['user'] || 'admin';
 
-		if (Context === 'all' && consts.CONTEXT_COMMAND[comd])
+		if (Context === 'all' && consts.CONTEXT_COMMAND[comd as keyof typeof consts.CONTEXT_COMMAND])
 		{
 			util.log('\n' + consts.COMANDS_CONTEXT_ERROR + '\n');
 			rl.prompt();
 			return;
 		}
 
-		if (!consts.SHOW_COMMAND[comd])
+		if (!consts.SHOW_COMMAND[comd as keyof typeof consts.SHOW_COMMAND])
 		{
 			agent.handle(helpCommand, msg, rl, client);
 			return;
@@ -69,7 +69,7 @@ export class Command implements ICommand
 			comd: comd,
 			param: param,
 			context: Context
-		}, function (err, data)
+		}, function (err:Error, data:{ msg: { [key: string]: any }})
 		{
 			if (err) console.log(err);
 			else util.formatOutput(comd, data);

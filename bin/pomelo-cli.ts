@@ -5,7 +5,7 @@ import * as util from '../lib/util';
 import { consts } from '../lib/consts';
 import { argv } from 'optimist';
 
-var extra = argv._;
+let extra = argv._;
 
 if (extra && extra.length)
 {
@@ -23,8 +23,8 @@ if (extra && extra.length)
 
 function showHelp()
 {
-	var HELP_LOGIN = consts.HELP_LOGIN;
-	for (var i = 0; i < HELP_LOGIN.length; i++)
+	let HELP_LOGIN = consts.HELP_LOGIN;
+	for (let i = 0; i < HELP_LOGIN.length; i++)
 	{
 		util.log(HELP_LOGIN[i]);
 	}

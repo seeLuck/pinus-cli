@@ -1,5 +1,5 @@
 import { getLogger } from 'pinus-logger';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 import * as util from '../util';
 import { consts } from '../consts';
 import * as cliff from 'cliff';
@@ -7,20 +7,20 @@ import { ICommand, AgentCommand } from '../command';
 import { ReadLine } from 'readline';
 import { AdminClient } from 'pinus-admin';
 
-export default function (opts)
+export default function (opts:object)
 {
 	return new Command(opts);
 };
 
-export var commandId = 'help';
+export let commandId = 'help';
 
 export class Command implements ICommand
 {
-	constructor(opts)
+	constructor(opts:object)
 	{
 
 	}
-	handle(agent: AgentCommand, comd: string, argv: string, msg: string, rl: ReadLine, client: AdminClient): void
+	handle(agent: AgentCommand, comd: string, argv: string, msg: {[key:string]: string}, rl: ReadLine, client: AdminClient): void
 	{
 		if (!comd)
 		{
@@ -28,7 +28,7 @@ export class Command implements ICommand
 			return;
 		}
 
-		var argvs = util.argsFilter(argv);
+		let argvs = util.argsFilter(argv);
 
 		if (argvs.length > 2)
 		{
@@ -43,10 +43,10 @@ export class Command implements ICommand
 			return;
 		}
 
-		if (consts.COMANDS_MAP[comd])
+		if (consts.COMANDS_MAP[comd as keyof typeof consts.COMANDS_MAP])
 		{
-			var INFOS = consts.COMANDS_MAP[comd];
-			for (var i = 0; i < INFOS.length; i++)
+			let INFOS = <Array<any>>consts.COMANDS_MAP[comd as keyof typeof consts.COMANDS_MAP];
+			for (let i = 0; i < INFOS.length; i++)
 			{
 				util.log(INFOS[i]);
 			}
@@ -57,19 +57,19 @@ export class Command implements ICommand
 		util.errorHandle(argv, rl);
 	}
 }
-var help = function ()
+let help = function ()
 {
-	var HELP_INFO_1 = consts.HELP_INFO_1;
-	for (var i = 0; i < HELP_INFO_1.length; i++)
+	let HELP_INFO_1 = consts.HELP_INFO_1;
+	for (let i = 0; i < HELP_INFO_1.length; i++)
 	{
 		util.log(HELP_INFO_1[i]);
 	}
 
-	var COMANDS_ALL = consts.COMANDS_ALL;
+	let COMANDS_ALL = consts.COMANDS_ALL;
 	util.log(cliff.stringifyRows(COMANDS_ALL));
 
-	var HELP_INFO_2 = consts.HELP_INFO_2;
-	for (var i = 0; i < HELP_INFO_2.length; i++)
+	let HELP_INFO_2 = consts.HELP_INFO_2;
+	for (let i = 0; i < HELP_INFO_2.length; i++)
 	{
 		util.log(HELP_INFO_2[i]);
 	}
